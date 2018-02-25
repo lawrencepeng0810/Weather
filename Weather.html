@@ -1,0 +1,169 @@
+<html>	
+<head>
+<meta charset="utf-8">
+</head>
+<style>
+	body {
+		font-family:微軟正黑體;
+		background-color: #4682B4 ;
+	    color:#ffffff;
+	    text-align: center;
+	}
+	#img {	
+		width: 120px;
+		height: 180px;
+		margin: 1px;
+		padding: 8px;
+		float: left;
+		background-color: #4CAF50;
+		padding: 10px;
+		display: inline;
+		opacity: 0.5;
+	}
+	h4 {
+			
+	   }
+	h1 {
+			color: #ffffff;
+			font-size:38px;
+	   }
+	h2 {
+			display: inline;
+			font-size:12px;
+	   }
+	h3 {
+			font-size:48px;
+			display: inline;
+			color:#ffffff;
+	   } 
+	  hr {
+			line-height:1px;
+		}	
+	div#content {
+
+		width:40%;
+		margin: 0 auto;
+		padding: 0px 8px;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		border-radius: 2px;
+				
+	}
+	
+	#pic img { 
+		 float:center;
+		 clear: both;
+	}
+	
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script>
+//https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-521DEC60-B295-41C1-8505-E503B835A159&format=json&callback=?"
+var ajax_url="http://api.tecyt.com/api/API0103Weather/GetCountryWeather?geoCountry=All&weatherDataType=Hours72&weatherSupportedLanguage=ChineseTraditional";
+$(document).ready(function() {
+	$.ajax({
+		 url: ajax_url,
+		  type: "GET",
+		  dataType: "json",
+		  //jsonpCallback:callback(),
+		  success: handleData,
+		  error: function() {
+			 alert('Fail');
+		   }
+		});
+		var d = new Date();
+		var year = d.getFullYear();
+		var month = d.getMonth()+1;
+		var date = d.getUTCDate();
+		var week ="";
+		
+
+		switch (d.getDay()) {
+ 				case 0:
+ 					week="星期日";
+ 				break;
+ 				case 1:
+ 					week="星期一";
+ 				break;
+ 				case 2:
+ 					week="星期二";
+ 				break;
+ 				case 3:
+ 					week="星期三";
+ 				break;
+ 				case 4:
+ 					week="星期四";
+ 				break;
+ 				case 5:
+ 					week="星期五";
+ 				break;
+ 				case 6:
+ 					week="星期六";
+ 				break;
+ 			}
+ 		var fulldate = week + ' ' + year + '/' + month + '/' + date;
+
+		function handleData(results) {
+			//alert(data[2].name);
+			var data = $.parseJSON(results);
+			$("#Location").text('台灣 '+results[4].Name);
+			$("#Date").text(fulldate);
+			$("#Temperature").text(results[4].Temperature[0].Temperature +"℃");
+			$("#ConfortInfomation").text(results[4].ConfortInfomation[0].Description);
+			$("#WeatherStatus").text(WeatherIcon(results[4].WeatherStatus[0].StatusName));
+		}
+		
+		
+		function WeatherIcon(WeatherStatus) {
+			var description=["晴天","多雲","短暫陣雨","短暫雨"];
+			var icon=["44.png","40.png","30.png","12.png"];
+			var result='';
+			var elem = ''
+			description.forEach(function(Element){
+					if (Element===WeatherStatus) {
+						elem=document.createElement("img");
+						switch (Element) {
+							case "晴天" :
+								elem.setAttribute("src","icons/32.png");
+							break;
+							case "多雲" :
+								elem.setAttribute("src","icons/44.png");
+							break;
+							case "短暫陣雨" :
+								elem.setAttribute("src","icons/35.png");
+							break;
+							case "短暫雨" :
+								elem.setAttribute("src","icons/40.png");
+							break;
+						}
+						
+						document.getElementById('pic').appendChild(elem);
+						result=Element;
+						return;
+					}
+				});
+				
+			return result;
+		}
+});
+</script>
+
+<body>
+	<div id="content">
+		<h1 id="Location"></h1>
+		<div><span id="Date"></span></div>
+		<br/>
+		<div id="pic"></div>
+		<div><h3 id="Temperature"></h3></div>
+		<p></p>
+		<div><span id="ConfortInfomation"></span> , <span id="WeatherStatus"></span></div>
+		<!--
+		<div id="WeatherForcast">	
+			<h2 id="1">1</h2>
+			<h2 id="2">2</h2>
+			<h2 id="3">3</h2>
+			<h2 id="4">4</h2>
+			<h2 id="5">5</h2>
+		</div>
+	-->
+	</div>
